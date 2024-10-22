@@ -1,0 +1,71 @@
+#!/usr/bin/env python3.10
+from socket import *
+import time
+import sys
+
+# ./proxy <listen-port> <fake-ip> <server-ip>
+listen_port = int(sys.argv[1]) # port your proxy should listen on for accepting connections from the client.
+fake_ip = sys.argv[2] # proxy should bind to this IP address for outbound connections to the server.
+server_ip = sys.argv[3] # The IP address of the server
+server_port = 8080
+
+# prepare proxy to be a server
+p_serverSocket = socket(AF_INET, SOCK_STREAM)
+p_serverSocket.bind(('' , listen_port))
+
+# prepare proxy to be a client 
+# p_clientSocket = socket(AF_INET, SOCK_STREAM)
+# serverName = 'localhost' is equal to server_ip
+
+while (True):
+    # proxy listens and connects with a client
+    p_serverSocket.listen(1)
+    client_connectionSocket, client_addr = p_serverSocket.accept()
+
+    # proxy connects to server when there is a client
+    p_clientSocket = socket(AF_INET, SOCK_STREAM)
+    p_clientSocket.connect((server_ip, server_port))
+    broken = False
+
+    # for this client
+    while (True):
+        # proxy listens for their message
+        client_msg = ""
+        
+        while (True): # listen to msg until EOS or client breaks
+            byte_msg = client_connectionSocket.recv(1)
+            if byte_msg.decode() == "": # client breaks
+                broken = True
+                break
+            client_msg += byte_msg.decode() 
+            if byte_msg.decode() == '\n': # EOS
+                break
+
+        if broken: # find another client to connect with
+            client_connectionSocket.close()
+            p_clientSocket.close() # close connection with server
+            break
+        
+        # proxy send message to server
+        p_clientSocket.send(client_msg.encode()) # sends client msg to server
+        server_msg = ""
+        while (True):
+            byte_msg = p_clientSocket.recv(1)
+            if byte_msg.decode() == "": # server breaks
+                broken = True
+                break
+            server_msg += byte_msg.decode()
+            if byte_msg.decode() == '\n':
+                break
+                
+        if broken: # find another client to connect with 
+            client_connectionSocket.close() # close connection with client
+            p_clientSocket.close() # close connection with server
+            break
+
+        # proxy send server_msg to client
+        client_connectionSocket.send(server_msg.encode())
+
+
+
+serverSocket.close()
