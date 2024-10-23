@@ -45,6 +45,7 @@ while (True):
                 byte_msg = client_connectionSocket.recv(1) # add in last char to client msg
                 client_msg += byte_msg.decode() 
                 break
+            print(repr(client_msg))
         
         if broken: # find another client to connect with
             client_connectionSocket.close()
