@@ -65,31 +65,38 @@ while (True):
         # proxy listens to server
         server_msg = ""
         print("Listen to server")
-        while (True): # UPDATE
+        while (True): # go through server header
             byte_msg = p_clientSocket.recv(1)
             if byte_msg.decode() == "": # server breaks
                 broken = True
                 break
             server_msg += byte_msg.decode()
-            print(f"server_msg so far: {server_msg}")
-            if byte_msg.decode() == '\n': # Check is content length is in server_msg
-                if "Content-Length" in server_msg:
-                    server_words = server_msg.replace("\r\n", "").split(" ")
-                    content_len_idx = server_words.index("Content-Length:") + 1
-                    content_len = int(server_words[content_len_idx].replace("\r\n", ""))
-                    print(f"content_len is {content_len}")
+            if byte_msg.decode() == '\r' and client_msg[-2] == '\n':
+                byte_msg = p_clientSocket.recv(1) # add in last char to server msg
+                server_msg += byte_msg.decode()
+                break
 
-                    break
-                
         if broken: # find another client to connect with
             client_connectionSocket.close() # close connection with client
             p_clientSocket.close() # close connection with server
             break
+            
+        # get content length from server headers
+        print(f"server response headers: {server_msg}")
+        server_words = server_msg.replace("\r\n", "").split(" ")
+        content_len_idx = server_words.index("Content-Length:") + 1
+        content_len = int(server_words[content_len_idx])
+        print(f"content_len is {content_len}")
+
+        # get the body of http response
+        for i in range(content_len//2048): # get batches of 2048 bytes
+            server_msg += p_clientSocket.recv(2048).decode()
+        server_msg += p_clientSocket.recv(content_len % 2048).decode() # get remaining bytes of msg
 
         # proxy send server_msg to client
         client_connectionSocket.send(server_msg.encode())
         print("Sent the following to client: ")
-        print(server_msg.encode())
+        print(server_msg)
 
 
 
