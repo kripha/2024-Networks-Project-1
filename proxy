@@ -20,7 +20,7 @@ p_serverSocket.bind(('' , listen_port))
 # p_clientSocket = socket(AF_INET, SOCK_STREAM)
 # serverName = 'localhost' is equal to server_ip
 
-def proxy_handles_client(p_clientSocket):
+def proxy_handles_client(client_connectionSocket, p_clientSocket):
     print(f"{threading.current_thread().name} is doing this")
     broken = False
     # for this client
