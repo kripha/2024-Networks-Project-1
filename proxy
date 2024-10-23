@@ -60,7 +60,7 @@ while (True):
         # proxy send message to server
         p_clientSocket.send(client_msg.encode()) # sends client msg to server
         print("Sent the following to server: ")
-        print(client_msg)
+        print(client_msg.split(" ")[1])
 
         # proxy listens to server
         server_msg = ""
@@ -96,7 +96,6 @@ while (True):
         for word in server_words:
             if "Content-Length" in word:
                 content_len = int(word.split(":")[-1])
-        print(f"content_len is {content_len}")
 
         # get the body of http response TODO: keep recv until you get all of content length
         body_msg = b""
