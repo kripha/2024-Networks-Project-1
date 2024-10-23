@@ -44,18 +44,18 @@ while (True):
             if byte_msg.decode() == '\r' and client_msg[-2] == '\n': # TODO: determine what EOS
                 byte_msg = client_connectionSocket.recv(1) # add in last char to client msg
                 client_msg += byte_msg.decode() 
-                print(repr(client_msg))
+                #print(repr(client_msg))
                 break
         
         if broken: # find another client to connect with
             client_connectionSocket.close()
             p_clientSocket.close() # close connection with server
             break
-        #TODO: find content length
-        client_words = client_msg.split(" ")
-        content_len_idx = client_words.index("Content-Length:") + 1
-        content_len = int(client_words[content_len_idx].replace("\r\n", ""))
-        print(f"content_len is {content_len}")
+    
+        # client_words = client_msg.split(" ")
+        # content_len_idx = client_words.index("Content-Length:") + 1
+        # content_len = int(client_words[content_len_idx].replace("\r\n", ""))
+        # print(f"content_len is {content_len}")
 
         # proxy send message to server
         p_clientSocket.send(client_msg.encode()) # sends client msg to server
@@ -65,14 +65,21 @@ while (True):
         # proxy listens to server
         server_msg = ""
         print("Listen to server")
-        for i in range(int(content_len//2048) + 1): # UPDATE
+        while (True): # UPDATE
             byte_msg = p_clientSocket.recv(2048)
             if byte_msg.decode() == "": # server breaks
                 broken = True
                 break
             server_msg += byte_msg.decode()
-            # if byte_msg.decode() == '\n':
-            #     break
+            print(f"server_msg so far: {server_msg}")
+            if byte_msg.decode() == '\n': # Check is content length is in server_msg
+                if "Content-Length" in server_msg:
+                    server_words = server_msg.replace("\r\n", "").split(" ")
+                    content_len_idx = server_words.index("Content-Length:") + 1
+                    content_len = int(server_words[content_len_idx].replace("\r\n", ""))
+                    print(f"content_len is {content_len}")
+
+                break
                 
         if broken: # find another client to connect with
             client_connectionSocket.close() # close connection with client
