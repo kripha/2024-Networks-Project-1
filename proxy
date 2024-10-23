@@ -40,6 +40,8 @@ while (True):
 
     # for this client
     f = open(logfile_name, "w")
+    f.close()
+    f = open(logfile_name, "a")
     print("Listen to client")
     while (True):
         # proxy listens for their message
