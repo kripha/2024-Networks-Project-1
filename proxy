@@ -39,7 +39,7 @@ while (True):
     print("Connected to server")
 
     # for this client
-    #f = open(logfile_name, "w")
+    f = open(logfile_name, "w")
     print("Listen to client")
     while (True):
         # proxy listens for their message
@@ -51,90 +51,78 @@ while (True):
                 break
             client_msg += byte_msg.decode()
             
-            if byte_msg.decode() == '\r' and client_msg[-2] == '\n': # TODO: determine what EOS
+            if byte_msg.decode() == '\r' and client_msg[-2] == '\n': 
                 byte_msg = client_connectionSocket.recv(1) # add in last char to client msg
                 client_msg += byte_msg.decode() 
-                #print(repr(client_msg))
                 break
         
         if broken: # find another client to connect with
             client_connectionSocket.close()
             p_clientSocket.close() # close connection with server
             break
-    
-        # client_words = client_msg.split(" ")
-        # content_len_idx = client_words.index("Content-Length:") + 1
-        # content_len = int(client_words[content_len_idx].replace("\r\n", ""))
-        # print(f"content_len is {content_len}")
 
         # proxy send message to server
         p_clientSocket.send(client_msg.encode()) # sends client msg to server
         print("Sent the following to server: ")
         print(client_msg.split(" ")[1])
         chunk_name = client_msg.split(" ")[1]
+
         # proxy listens to server
         server_msg = ""
         print("Listen to server")
         start_time = time.time()
-        while (True): # go through server header
+        while (True): 
             # check if we reached the end of header
             if len(server_msg) >= 4 and server_msg[-4:] == "\r\n\r\n":
                 break 
             byte_msg = p_clientSocket.recv(1)
-            # if byte_msg.decode() == "": # TODO: server breaks
-            #     broken = True
-            #     break
             if not byte_msg:
                 broken = True
                 break
-            #if recv returns something
             server_msg += byte_msg.decode()
             if byte_msg.decode() == '\r' and client_msg[-2] == '\n':
                 byte_msg = p_clientSocket.recv(1) # add in last char to server msg
                 server_msg += byte_msg.decode()
                 break
 
-        if broken: # find another client to connect with
-            client_connectionSocket.close() # close connection with client
-            p_clientSocket.close() # close connection with server
+        if broken: # close connections
+            client_connectionSocket.close()
+            p_clientSocket.close() 
             break
             
         # get content length from server headers
         print(f"server response headers: {server_msg}")
         server_words = server_msg.replace(" ", "").split("\r\n")
         print(server_words)
-        #content_len_idx = server_words.index("Content-Length:") + 1
         for word in server_words:
             if "Content-Length" in word:
                 content_len = int(word.split(":")[-1])
 
-        # get the body of http response TODO: keep recv until you get all of content length
+        # get the body of http response 
         body_msg = b""
         while(len(body_msg) != content_len):
             if not byte_msg:
                 broken = True
                 break
-            byte_msg = p_clientSocket.recv(2048) # add in last char to server msg
-            body_msg += byte_msg # TODO: do
+            byte_msg = p_clientSocket.recv(2048)
+            body_msg += byte_msg 
 
-        if broken: # find another client to connect with
-            client_connectionSocket.close() # close connection with client
-            p_clientSocket.close() # close connection with server
+        if broken: # close connections
+            client_connectionSocket.close()
+            p_clientSocket.close()
             break
-        # for i in range(content_len//2048): # get batches of 2048 bytes
-        #     server_msg += p_clientSocket.recv(2048).decode()
-        # server_msg += p_clientSocket.recv(content_len % 2048).decode() # get remaining bytes of msg
 
         # log 
-        logger.info(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
+        #logger.info(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
 
-        # f.write(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
-        # f.flush()
+        f.write(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
+        f.flush()
+
         # proxy send server_msg to client
         client_connectionSocket.send(server_msg.encode())
         client_connectionSocket.send(body_msg)
         print("Sent response to client ")
 
-    #f.close()
+    f.close()
 
 serverSocket.close()
