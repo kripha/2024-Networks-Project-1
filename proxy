@@ -21,50 +21,66 @@ while (True):
     # proxy listens and connects with a client
     p_serverSocket.listen(1)
     client_connectionSocket, client_addr = p_serverSocket.accept()
+    print("Accepted to client")
 
     # proxy connects to server when there is a client
     p_clientSocket = socket(AF_INET, SOCK_STREAM)
     p_clientSocket.connect((server_ip, server_port))
     broken = False
+    print("Connected to server")
 
     # for this client
+    print("Listen to client")
     while (True):
         # proxy listens for their message
         client_msg = ""
-        
         while (True): # listen to msg until EOS or client breaks
             byte_msg = client_connectionSocket.recv(1)
             if byte_msg.decode() == "": # client breaks
                 broken = True
                 break
-            client_msg += byte_msg.decode() 
-            if byte_msg.decode() == '\n': # EOS
+            client_msg += byte_msg.decode()
+            
+            if byte_msg.decode() == '\r' and client_msg[-1] == '\n': # TODO: determine what EOS
+                byte_msg = client_connectionSocket.recv(1) # add in last char to client msg
+                client_msg += byte_msg.decode() 
                 break
-
+        
         if broken: # find another client to connect with
             client_connectionSocket.close()
             p_clientSocket.close() # close connection with server
             break
-        
+        #TODO: find content length
+        client_words = client_msg.split(" ")
+        content_len_idx = client_words.index("Content-Length:") + 1
+        content_len = int(client_words[content_len_idx].replace("\r\n", ""))
+
         # proxy send message to server
         p_clientSocket.send(client_msg.encode()) # sends client msg to server
+        print("Sent the following to server: ")
+        print(client_msg.encode())
+
+        # proxy listens to server
         server_msg = ""
-        while (True):
-            byte_msg = p_clientSocket.recv(1)
+        print("Listen to server")
+        for i in range(int(content_len//2048) + 1): # UPDATE
+            byte_msg = p_clientSocket.recv(2048)
             if byte_msg.decode() == "": # server breaks
                 broken = True
                 break
             server_msg += byte_msg.decode()
-            if byte_msg.decode() == '\n':
-                break
+            # if byte_msg.decode() == '\n':
+            #     break
                 
-        if broken: # find another client to connect with 
+        if broken: # find another client to connect with
             client_connectionSocket.close() # close connection with client
             p_clientSocket.close() # close connection with server
             break
 
         # proxy send server_msg to client
         client_connectionSocket.send(server_msg.encode())
+        print("Sent the following to client: ")
+        print(server_msg.encode())
 
 
 
