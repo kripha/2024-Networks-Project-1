@@ -39,8 +39,8 @@ while (True):
     print("Connected to server")
 
     # for this client
-    f = open(logfile_name, "w")
-    f.close()
+    # f = open(logfile_name, "w")
+    # f.close()
     f = open(logfile_name, "a")
     print("Listen to client")
     while (True):
