@@ -67,7 +67,7 @@ while (True):
         print("Listen to server")
         while (True): # go through server header
             byte_msg = p_clientSocket.recv(1)
-            if byte_msg.decode() == "": # TODO: server breaks
+            if byte_msg.decode('utf-16') == "": # TODO: server breaks
                 broken = True
                 break
             server_msg += byte_msg.decode()
