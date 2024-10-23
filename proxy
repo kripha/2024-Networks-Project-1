@@ -92,8 +92,10 @@ while (True):
         print(f"server response headers: {server_msg}")
         server_words = server_msg.replace(" ", "").split("\r\n")
         print(server_words)
-        content_len_idx = server_words.index("Content-Length:") + 1
-        content_len = int(server_words[content_len_idx])
+        #content_len_idx = server_words.index("Content-Length:") + 1
+        for word in server_words:
+            if "Content-Length" in word:
+                content_len = word.split(":")[-1]
         print(f"content_len is {content_len}")
 
         # get the body of http response
