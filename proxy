@@ -2,11 +2,14 @@
 from socket import *
 import time
 import sys
+import logging
 
-# ./proxy <listen-port> <fake-ip> <server-ip>
-listen_port = int(sys.argv[1]) # port your proxy should listen on for accepting connections from the client.
-fake_ip = sys.argv[2] # proxy should bind to this IP address for outbound connections to the server.
-server_ip = sys.argv[3] # The IP address of the server
+
+# ./proxy <logfile> <listen-port> <fake-ip> <server-ip>
+logfile_name = sys.argv[1] 
+listen_port = int(sys.argv[2]) # port your proxy should listen on for accepting connections from the client.
+fake_ip = sys.argv[3] # proxy should bind to this IP address for outbound connections to the server.
+server_ip = sys.argv[4] # The IP address of the server
 server_port = 80
 
 # prepare proxy to be a server
@@ -16,6 +19,11 @@ p_serverSocket.bind(('' , listen_port))
 # prepare proxy to be a client 
 # p_clientSocket = socket(AF_INET, SOCK_STREAM)
 # serverName = 'localhost' is equal to server_ip
+
+# Create and configure logger
+logging.basicConfig(filename=logfile_name, format='%(message)s', filemode='w')
+logger = logging.getLogger()
+#logger.setLevel(logging.DEBUG)
 
 while (True):
     # proxy listens and connects with a client
@@ -61,10 +69,11 @@ while (True):
         p_clientSocket.send(client_msg.encode()) # sends client msg to server
         print("Sent the following to server: ")
         print(client_msg.split(" ")[1])
-
+        chunk_name = client_msg.split(" ")[1]
         # proxy listens to server
         server_msg = ""
         print("Listen to server")
+        start_time = time.time()
         while (True): # go through server header
             # check if we reached the end of header
             if len(server_msg) >= 4 and server_msg[-4:] == "\r\n\r\n":
@@ -114,6 +123,8 @@ while (True):
         #     server_msg += p_clientSocket.recv(2048).decode()
         # server_msg += p_clientSocket.recv(content_len % 2048).decode() # get remaining bytes of msg
 
+        # log 
+        logger.info(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}")
         # proxy send server_msg to client
         client_connectionSocket.send(server_msg.encode())
         client_connectionSocket.send(body_msg)
