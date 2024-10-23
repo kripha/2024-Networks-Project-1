@@ -90,7 +90,7 @@ while (True):
             
         # get content length from server headers
         print(f"server response headers: {server_msg}")
-        server_words = server_msg.split(" ")
+        server_words = server_msg.replace(" ", "").split("\r\n")
         print(server_words)
         content_len_idx = server_words.index("Content-Length:") + 1
         content_len = int(server_words[content_len_idx])
