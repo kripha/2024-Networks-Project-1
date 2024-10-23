@@ -20,12 +20,7 @@ p_serverSocket.bind(('' , listen_port))
 # p_clientSocket = socket(AF_INET, SOCK_STREAM)
 # serverName = 'localhost' is equal to server_ip
 
-def proxy_handles_client(client_connectionSocket):
-    # proxy connects to server when there is a client
-    p_clientSocket = socket(AF_INET, SOCK_STREAM)
-    p_clientSocket.connect((server_ip, server_port))
-    broken = False
-    print("Connected to server")
+def proxy_handles_client(client_connectionSocket, p_clientSocket):
 
     # for this client
     f = open(logfile_name, "a")
@@ -118,11 +113,17 @@ def proxy_handles_client(client_connectionSocket):
 
 
 while (True):
+    # proxy connects to server
+    p_clientSocket = socket(AF_INET, SOCK_STREAM)
+    p_clientSocket.connect((server_ip, server_port))
+    broken = False
+    print("Connected to server")
+
     # proxy listens and connects with a client
     p_serverSocket.listen(1)
     client_connectionSocket, _ = p_serverSocket.accept()
     print("Accepted to client")
-    t1 = threading.Thread(target=proxy_handles_client, args=(client_connectionSocket,))
+    t1 = threading.Thread(target=proxy_handles_client, args=(client_connectionSocket, p_clientSocket, ))
     t1.start()
 
 
