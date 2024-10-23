@@ -95,13 +95,25 @@ while (True):
         #content_len_idx = server_words.index("Content-Length:") + 1
         for word in server_words:
             if "Content-Length" in word:
-                content_len = word.split(":")[-1]
+                content_len = int(word.split(":")[-1])
         print(f"content_len is {content_len}")
 
-        # get the body of http response
-        for i in range(content_len//2048): # get batches of 2048 bytes
-            server_msg += p_clientSocket.recv(2048).decode()
-        server_msg += p_clientSocket.recv(content_len % 2048).decode() # get remaining bytes of msg
+        # get the body of http response TODO: keep recv until you get all of content length
+        body_msg = ""
+        while(len(body_msg) != content_len):
+            if not byte_msg:
+                broken = True
+                break
+            byte_msg = p_clientSocket.recv(1) # add in last char to server msg
+            body_msg += byte_msg.decode()
+
+        if broken: # find another client to connect with
+            client_connectionSocket.close() # close connection with client
+            p_clientSocket.close() # close connection with server
+            break
+        # for i in range(content_len//2048): # get batches of 2048 bytes
+        #     server_msg += p_clientSocket.recv(2048).decode()
+        # server_msg += p_clientSocket.recv(content_len % 2048).decode() # get remaining bytes of msg
 
         # proxy send server_msg to client
         client_connectionSocket.send(server_msg.encode())
