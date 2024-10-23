@@ -60,13 +60,13 @@ while (True):
         # proxy send message to server
         p_clientSocket.send(client_msg.encode()) # sends client msg to server
         print("Sent the following to server: ")
-        print(client_msg.encode())
+        print(client_msg)
 
         # proxy listens to server
         server_msg = ""
         print("Listen to server")
         while (True): # UPDATE
-            byte_msg = p_clientSocket.recv(2048)
+            byte_msg = p_clientSocket.recv(1)
             if byte_msg.decode() == "": # server breaks
                 broken = True
                 break
