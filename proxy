@@ -70,12 +70,15 @@ while (True):
             # if byte_msg.decode() == "": # TODO: server breaks
             #     broken = True
             #     break
-            if byte_msg: #if recv returns something
+            if not byte_msg:
+                broken = True
+                break
+            #if recv returns something
+            server_msg += byte_msg.decode()
+            if byte_msg.decode() == '\r' and client_msg[-2] == '\n':
+                byte_msg = p_clientSocket.recv(1) # add in last char to server msg
                 server_msg += byte_msg.decode()
-                if byte_msg.decode() == '\r' and client_msg[-2] == '\n':
-                    byte_msg = p_clientSocket.recv(1) # add in last char to server msg
-                    server_msg += byte_msg.decode()
-                    break
+                break
 
         if broken: # find another client to connect with
             client_connectionSocket.close() # close connection with client
