@@ -99,13 +99,13 @@ while (True):
         print(f"content_len is {content_len}")
 
         # get the body of http response TODO: keep recv until you get all of content length
-        body_msg = ""
+        body_msg = b""
         while(len(body_msg) != content_len):
             if not byte_msg:
                 broken = True
                 break
             byte_msg = p_clientSocket.recv(1) # add in last char to server msg
-            body_msg += byte_msg.decode()
+            body_msg += byte_msg # TODO: do
 
         if broken: # find another client to connect with
             client_connectionSocket.close() # close connection with client
