@@ -79,7 +79,7 @@ while (True):
                     content_len = int(server_words[content_len_idx].replace("\r\n", ""))
                     print(f"content_len is {content_len}")
 
-                break
+                    break
                 
         if broken: # find another client to connect with
             client_connectionSocket.close() # close connection with client
