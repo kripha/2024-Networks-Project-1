@@ -41,7 +41,7 @@ while (True):
     # for this client
     # f = open(logfile_name, "w")
     # f.close()
-    f = open(logfile_name, "a")
+    # f = open(logfile_name, "a")
     print("Listen to client")
     while (True):
         # proxy listens for their message
@@ -117,14 +117,14 @@ while (True):
         # log 
         #logger.info(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
 
-        f.write(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
-        f.flush()
+        # f.write(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
+        # f.flush()
 
         # proxy send server_msg to client
         client_connectionSocket.send(server_msg.encode())
         client_connectionSocket.send(body_msg)
         print("Sent response to client ")
 
-    f.close()
+    # f.close()
 
 serverSocket.close()
