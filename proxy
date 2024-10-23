@@ -2,7 +2,7 @@
 from socket import *
 import time
 import sys
-import logging
+import threading
 
 
 # ./proxy <logfile> <listen-port> <fake-ip> <server-ip>
@@ -20,18 +20,7 @@ p_serverSocket.bind(('' , listen_port))
 # p_clientSocket = socket(AF_INET, SOCK_STREAM)
 # serverName = 'localhost' is equal to server_ip
 
-# Create and configure logger
-logging.basicConfig(filename=logfile_name, format='%(message)s', filemode='w')
-logger = logging.getLogger()
-#logger.setLevel(logging.DEBUG)
-
-
-while (True):
-    # proxy listens and connects with a client
-    p_serverSocket.listen(1)
-    client_connectionSocket, client_addr = p_serverSocket.accept()
-    print("Accepted to client")
-
+def proxy_handles_client(client_connectionSocket):
     # proxy connects to server when there is a client
     p_clientSocket = socket(AF_INET, SOCK_STREAM)
     p_clientSocket.connect((server_ip, server_port))
@@ -39,15 +28,13 @@ while (True):
     print("Connected to server")
 
     # for this client
-    # f = open(logfile_name, "w")
-    # f.close()
     f = open(logfile_name, "a")
     print("Listen to client")
     while (True):
         # proxy listens for their message
         client_msg = ""
         while (True): # listen to msg until EOS or client breaks
-            byte_msg = client_connectionSocket.recv(1)
+            byte_msg = client_connectionSocket.recv(2048)
             if byte_msg.decode() == "": # client breaks
                 broken = True
                 break
@@ -126,5 +113,17 @@ while (True):
         print("Sent response to client ")
 
     f.close()
+
+
+
+
+while (True):
+    # proxy listens and connects with a client
+    p_serverSocket.listen(1)
+    client_connectionSocket, _ = p_serverSocket.accept()
+    print("Accepted to client")
+    t1 = threading.Thread(target=proxy_handles_client, args=(client_connectionSocket,))
+    t1.start()
+
 
 serverSocket.close()
