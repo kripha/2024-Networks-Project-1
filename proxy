@@ -125,7 +125,7 @@ while (True):
 
         # log 
         #logger.info(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}")
-        with open(logfile_name, "w+") as f:
+        with open(logfile_name, "w") as f:
             f.write(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
             f.flush()
         # proxy send server_msg to client
