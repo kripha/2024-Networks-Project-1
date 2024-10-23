@@ -7,7 +7,7 @@ import sys
 listen_port = int(sys.argv[1]) # port your proxy should listen on for accepting connections from the client.
 fake_ip = sys.argv[2] # proxy should bind to this IP address for outbound connections to the server.
 server_ip = sys.argv[3] # The IP address of the server
-server_port = 8080
+server_port = 80
 
 # prepare proxy to be a server
 p_serverSocket = socket(AF_INET, SOCK_STREAM)
