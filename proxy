@@ -117,6 +117,7 @@ while (True):
 
         # proxy send server_msg to client
         client_connectionSocket.send(server_msg.encode())
+        client_connectionSocket.send(body_msg)
         print("Sent the following to client: ")
         print(server_msg)
 
