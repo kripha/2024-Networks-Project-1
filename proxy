@@ -77,7 +77,7 @@ while (True):
             # check if we reached the end of header
             if len(server_msg) >= 4 and server_msg[-4:] == "\r\n\r\n":
                 break 
-            byte_msg = p_clientSocket.recv(2048)
+            byte_msg = p_clientSocket.recv(1)
             if not byte_msg:
                 broken = True
                 break
