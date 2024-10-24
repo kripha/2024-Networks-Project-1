@@ -16,20 +16,19 @@ server_port = 80
 # p_clientSocket = socket(AF_INET, SOCK_STREAM)
 # serverName = 'localhost' is equal to server_ip
 
-def proxy_handles_client(client_connectionSocket):
+def proxy_handles_client(client_connectionSocket, p_clientSocket):
     print(f"{threading.current_thread().name} is doing this")
-    # proxy connects to server
-    p_clientSocket = socket(AF_INET, SOCK_STREAM)
-    p_clientSocket.connect((server_ip, server_port))
-    print("Connected to server")
+    # # proxy connects to server
+    # p_clientSocket = socket(AF_INET, SOCK_STREAM)
+    # p_clientSocket.connect((server_ip, server_port))
     broken = False
 
     # for this client
     f = open(logfile_name, "a")
-    print("Listen to client")
     while (True):
         # proxy listens for their message
         client_msg = ""
+        print("Listen to client")
         while (True): # listen to msg until EOS or client breaks
             byte_msg = client_connectionSocket.recv(2048)
             if byte_msg.decode() == "": # client breaks
@@ -119,8 +118,12 @@ p_serverSocket.listen(0)
 while (True):
     # proxy listens and connects with a client
     client_connectionSocket, client_addr = p_serverSocket.accept()
+    # proxy connects to server
+    p_clientSocket = socket(AF_INET, SOCK_STREAM)
+    p_clientSocket.connect((server_ip, server_port))
+
     print("Accepted to client")
-    t1 = threading.Thread(target=proxy_handles_client, args=(p_serverSocket.accept()[0], ))
+    t1 = threading.Thread(target=proxy_handles_client, args=(p_serverSocket.accept()[0], p_clientSocket))
     t1.start()
     break
 
