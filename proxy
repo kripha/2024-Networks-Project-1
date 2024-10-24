@@ -12,10 +12,6 @@ fake_ip = sys.argv[3] # proxy should bind to this IP address for outbound connec
 server_ip = sys.argv[4] # The IP address of the server
 server_port = 80
 
-# # prepare proxy to be a server
-p_serverSocket = socket(AF_INET, SOCK_STREAM)
-p_serverSocket.bind(('' , listen_port))
-
 # prepare proxy to be a client 
 # p_clientSocket = socket(AF_INET, SOCK_STREAM)
 # serverName = 'localhost' is equal to server_ip
@@ -116,11 +112,13 @@ def proxy_handles_client(client_connectionSocket):
     f.close()
     print(f"{threading.current_thread().name} is done")
 
-# proxy listens and connects with a client
-p_serverSocket.listen(1)
+# prepare proxy to be a server
+p_serverSocket = socket(AF_INET, SOCK_STREAM)
+p_serverSocket.bind(('' , listen_port))
+p_serverSocket.listen(0)
 while (True):
-
-    #client_connectionSocket, _ = p_serverSocket.accept()
+    # proxy listens and connects with a client
+    client_connectionSocket, client_addr = p_serverSocket.accept()
     print("Accepted to client")
     t1 = threading.Thread(target=proxy_handles_client, args=(p_serverSocket.accept()[0], ))
     t1.start()
