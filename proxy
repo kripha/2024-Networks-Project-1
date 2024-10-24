@@ -27,7 +27,7 @@ def proxy_handles_client(client_connectionSocket):
     p_clientSocket.connect((server_ip, server_port))
     print("Connected to server")
     broken = False
-    
+
     # for this client
     f = open(logfile_name, "a")
     print("Listen to client")
@@ -124,6 +124,7 @@ while (True):
     print("Accepted to client")
     t1 = threading.Thread(target=proxy_handles_client, args=(p_serverSocket.accept()[0], ))
     t1.start()
+    break
 
 
-serverSocket.close()
+#serverSocket.close()
