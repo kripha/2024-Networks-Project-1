@@ -120,9 +120,9 @@ def proxy_handles_client(client_connectionSocket):
 p_serverSocket.listen(1)
 while (True):
 
-    client_connectionSocket, _ = p_serverSocket.accept()
+    #client_connectionSocket, _ = p_serverSocket.accept()
     print("Accepted to client")
-    t1 = threading.Thread(target=proxy_handles_client, args=(client_connectionSocket, ))
+    t1 = threading.Thread(target=proxy_handles_client, args=(p_serverSocket.accept()[0], ))
     t1.start()
 
 
