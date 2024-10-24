@@ -25,9 +25,9 @@ def proxy_handles_client(client_connectionSocket):
     # proxy connects to server
     p_clientSocket = socket(AF_INET, SOCK_STREAM)
     p_clientSocket.connect((server_ip, server_port))
-    #broken = False
     print("Connected to server")
     broken = False
+    
     # for this client
     f = open(logfile_name, "a")
     print("Listen to client")
