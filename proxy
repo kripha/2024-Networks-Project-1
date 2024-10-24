@@ -125,7 +125,7 @@ while (True):
     print("Accepted to client")
     t1 = threading.Thread(target=proxy_handles_client, args=(client_connectionSocket, p_clientSocket))
     t1.start()
-    break
+    
 
 
 #serverSocket.close()
