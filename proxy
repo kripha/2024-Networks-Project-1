@@ -31,7 +31,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket):
         print("Listen to client")
         while (True): # listen to msg until EOS or client breaks
             print("Listen to client2")
-            byte_msg = client_connectionSocket.recv(2048)
+            byte_msg = client_connectionSocket.recv(1)
             print("Listen to client3")
             if byte_msg.decode() == "": # client breaks
                 broken = True
