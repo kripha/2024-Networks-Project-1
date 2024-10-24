@@ -12,27 +12,14 @@ fake_ip = sys.argv[3] # proxy should bind to this IP address for outbound connec
 server_ip = sys.argv[4] # The IP address of the server
 server_port = 80
 
-# prepare proxy to be a client 
-# p_clientSocket = socket(AF_INET, SOCK_STREAM)
-# serverName = 'localhost' is equal to server_ip
-
 def proxy_handles_client(client_connectionSocket, p_clientSocket):
-    print(f"{threading.current_thread().name} is doing this")
-    # # proxy connects to server
-    # p_clientSocket = socket(AF_INET, SOCK_STREAM)
-    # p_clientSocket.connect((server_ip, server_port))
     broken = False
-
-    # for this client
     f = open(logfile_name, "a")
+    
     while (True):
-        # proxy listens for their message
         client_msg = ""
-        print("Listen to client")
-        while (True): # listen to msg until EOS or client breaks
-            print("Listen to client2")
-            byte_msg = client_connectionSocket.recv(1)
-            print("Listen to client3")
+        while (True): # listen to client msg until EOS or client breaks
+            byte_msg = client_connectionSocket.recv(1) # could do recv(2048) but with the loop, you are overshooting and thus youre just hanging in the loop
             if byte_msg.decode() == "": # client breaks
                 broken = True
                 break
@@ -43,20 +30,17 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket):
                 client_msg += byte_msg.decode() 
                 break
         
-        if broken: # find another client to connect with
+        if broken: 
             client_connectionSocket.close()
-            p_clientSocket.close() # close connection with server
+            p_clientSocket.close() 
             break
 
         # proxy send message to server
         p_clientSocket.send(client_msg.encode()) # sends client msg to server
-        print("Sent the following to server: ")
-        print(client_msg.split(" ")[1])
         chunk_name = client_msg.split(" ")[1]
 
         # proxy listens to server
         server_msg = ""
-        print("Listen to server")
         start_time = time.time()
         while (True): 
             # check if we reached the end of header
@@ -78,9 +62,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket):
             break
             
         # get content length from server headers
-        print(f"server response headers: {server_msg}")
         server_words = server_msg.replace(" ", "").split("\r\n")
-        print(server_words)
         for word in server_words:
             if "Content-Length" in word:
                 content_len = int(word.split(":")[-1])
@@ -99,19 +81,14 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket):
             p_clientSocket.close()
             break
 
-        # log 
-        #logger.info(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
-
         f.write(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
         f.flush()
 
         # proxy send server_msg to client
         client_connectionSocket.send(server_msg.encode())
         client_connectionSocket.send(body_msg)
-        print("Sent response to client ")
 
     f.close()
-    print(f"{threading.current_thread().name} is done")
 
 # prepare proxy to be a server
 p_serverSocket = socket(AF_INET, SOCK_STREAM)
