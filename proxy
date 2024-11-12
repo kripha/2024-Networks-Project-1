@@ -50,9 +50,11 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket):
         # proxy send message to server
         #TODO: change HTTP request based on selected bitrate
         #print("DEBUG: client sent:\n",client_msg)
-        chunk_name = client_msg.split(" ")[1]
+        client_words = client_msg.split(" ")
+        chunk_name = client_words[1]
         if "BigBuckBunny_6s_nolist.mpd" in chunk_name:
-            chunk_name = "/var/www/html/BigBuckBunny_6s.mpd"
+            client_words[1] = "/BigBuckBunny_6s.mpd"
+            client_msg = " ".join(client_words)
             get_mpd = True
         else:
             get_mpd = False
