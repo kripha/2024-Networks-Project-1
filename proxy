@@ -26,7 +26,7 @@ def choose_bitrate(t_curr, available_bitrates):
 def proxy_handles_client(client_connectionSocket, p_clientSocket):
     broken = False
     f = open(logfile_name, "a")
-    
+    available_bitrates = []
     while (True):
         client_msg = ""
         #TODO: fetch BigBuckBunny_6s.mpd and get list of available bitrates
@@ -49,9 +49,15 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket):
 
         # proxy send message to server
         #TODO: change HTTP request based on selected bitrate
-        print("DEBUG: client sent:\n",client_msg)
-        p_clientSocket.send(client_msg.encode()) # sends client msg to server
+        #print("DEBUG: client sent:\n",client_msg)
         chunk_name = client_msg.split(" ")[1]
+        if "BigBuckBunny_6s_nolist.mpd" in chunk_name:
+            chunk_name = "/var/www/html/BigBuckBunny_6s.mpd"
+            get_mpd = True
+        else:
+            get_mpd = False
+        p_clientSocket.send(client_msg.encode()) # sends client msg to server
+        
 
         # proxy listens to server
         server_msg = ""
@@ -94,7 +100,10 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket):
             client_connectionSocket.close()
             p_clientSocket.close()
             break
-        
+
+        if get_mpd:
+            # update the available bitrates
+            print("DEBUG get_mpd body msg: ", body_msg.decode()) # DEBUG
         #TODO: log <time> <duration> <tput> <avg-tput> <chunk-bitrate> <server-ip> <chunkname>
         f.write(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
         f.flush()
