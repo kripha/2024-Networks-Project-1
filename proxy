@@ -12,12 +12,24 @@ fake_ip = sys.argv[3] # proxy should bind to this IP address for outbound connec
 server_ip = sys.argv[4] # The IP address of the server
 server_port = 80
 
+#TODO: main separate throughput estimates for each <client IP, server IP> pair
+#TODO: initialize t_curr to lowest available bitrate for that <client, server> pair
+def throughput_calc(start_time, end_time, chunk_size, t_curr, alpha):
+    t_new = chunk_size/(end_time-start_time)
+    t_curr = alpha*t_new + (1-alpha)*t_curr
+
+def choose_bitrate(t_curr, available_bitrates):
+    #TODO: t_curr => 1.5*bitrate
+    #TODO: get bitrates are available for a given video by parsing manifest file
+    pass
+
 def proxy_handles_client(client_connectionSocket, p_clientSocket):
     broken = False
     f = open(logfile_name, "a")
     
     while (True):
         client_msg = ""
+        #TODO: fetch BigBuckBunny_6s.mpd and get list of available bitrates
         while (True): # listen to client msg until EOS or client breaks
             byte_msg = client_connectionSocket.recv(1) # could do recv(2048) but with the loop, you are overshooting and thus youre just hanging in the loop
             if byte_msg.decode() == "": # client breaks
@@ -36,6 +48,8 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket):
             break
 
         # proxy send message to server
+        #TODO: change HTTP request based on selected bitrate
+        print("DEBUG: client sent:\n",client_msg)
         p_clientSocket.send(client_msg.encode()) # sends client msg to server
         chunk_name = client_msg.split(" ")[1]
 
@@ -80,7 +94,8 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket):
             client_connectionSocket.close()
             p_clientSocket.close()
             break
-
+        
+        #TODO: log <time> <duration> <tput> <avg-tput> <chunk-bitrate> <server-ip> <chunkname>
         f.write(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
         f.flush()
 
@@ -108,4 +123,3 @@ while (True):
 
 
 #serverSocket.close()
-
