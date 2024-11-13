@@ -20,7 +20,7 @@ server_port = 80
 throughputs = defaultdict(int) # holds the t_curr for each client/server pair
 availability = defaultdict(list) # hold the lists of available bitrates for each client
 
-mpd_request = "GET /BigBuckBunny_6s.mpd HTTP/1.1\r\nHost: 3.0.0.1:8001\r\n Connection: keep-alive\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36\r\nAccept: */*\r\nReferer: http://3.0.0.1:8001/\r\nAccept-Encoding: gzip, deflate\r\nAccept-Language: en-US,en;q=0.9\r\n\r\n"
+mpd_request = "GET /BigBuckBunny_6s.mpd HTTP/1.1\r\nHost: 3.0.0.1:8001\r\nConnection: keep-alive\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36\r\nAccept: */*\r\nReferer: http://3.0.0.1:8001/\r\nAccept-Encoding: gzip, deflate\r\nAccept-Language: en-US,en;q=0.9\r\n\r\n"
 
 def listen_to_server(client_connectionSocket, p_clientSocket):
     broken = False
