@@ -106,7 +106,8 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
                 break
 
         if broken: # close connections
-            print(f"DEBUG: {server_msg}")
+            print(f"DEBUG: this is server msg")
+            print(server_msg)
             client_connectionSocket.close()
             p_clientSocket.close() 
             print("DEBUG: server disconnects\n")
