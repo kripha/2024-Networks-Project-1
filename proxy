@@ -105,6 +105,9 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket):
 
         if get_mpd:
             # update the available bitrates
+            for word in body_msg.decode().split(" "):
+                if "bandwidth=" in word:
+                    available_bitrates.append(int(word.split("="[-1])))
             print("DEBUG get_mpd body msg: ", body_msg.decode()) # DEBUG
         #TODO: log <time> <duration> <tput> <avg-tput> <chunk-bitrate> <server-ip> <chunkname>
         f.write(f"{time.time()} {time.time()-start_time} {server_ip} {chunk_name} {content_len}\n")
