@@ -36,6 +36,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
     available_bitrates = []
     bitrate = 0
     t_curr = 0
+    print(f"DEBUG: proxy's client addr is {client_addr}")
     while (True):
         client_msg = ""
         start_time = time.time()
@@ -66,7 +67,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
 
         else: # modify video request
             get_mpd = False
-            t_curr = throughputs[(client_addr, server_ip)]
+            t_curr = throughputs[(client_addr[0], server_ip)]
             bitrate = choose_bitrate(t_curr, available_bitrates)
             bitrate = str(bitrate)
             # /path/to/video/bunny_<bitrate_label>bps/BigBuckBunny_6s<num>
@@ -126,13 +127,13 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
                     available_bitrates.append(int(word.split("="[-1])))
             available_bitrates = sorted(available_bitrates)
             if (client_addr, server_ip) in throughputs.keys():
-                t_curr = throughputs[(client_addr, server_ip)]
+                t_curr = throughputs[(client_addr[0], server_ip)]
             else:
                 t_curr = available_bitrates[0]
-                throughputs[(client_addr, server_ip)] = t_curr
+                throughputs[(client_addr[0], server_ip)] = t_curr
         else: # update t_curr
             t_new, t_curr = calc_throughput(start_time, end_time, content_len, t_curr, alpha)
-            throughputs[(client_addr, server_ip)] = t_curr # update dict
+            throughputs[(client_addr[0], server_ip)] = t_curr # update dict
 
 
         #TODO: log <time> <duration> <tput> <avg-tput> <chunk-bitrate> <server-ip> <chunkname>
