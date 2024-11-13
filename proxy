@@ -14,7 +14,7 @@ alpha = sys.argv[3]
 listen_port = int(sys.argv[4]) # port your proxy should listen on for accepting connections from the client.
 fake_ip = sys.argv[5] # proxy should bind to this IP address for outbound connections to the server.
 server_port = sys.argv[6]
-server_ip = " 3.0.0.1" # TODO: use dns to find server ip
+server_ip = "3.0.0.1" # TODO: use dns to find server ip
 server_port = 80
 
 throughputs = {} # holds the t_curr for each client/server pair
