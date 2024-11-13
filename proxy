@@ -74,6 +74,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
             client_msg = " ".join(client_words)
             get_mpd = True
         # NOTE: what if server disconnect and reconnects? there is already a list of mpd
+        # NOTE: what if it connects with a different server than last time?
         elif "BigBuckBunny_6s" in chunk_name: # modify video request if the request is asking for a video clip
             if len(available_bitrates) == 0:
                 # get the list again from dict
@@ -105,6 +106,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
                 break
 
         if broken: # close connections
+            print(f"DEBUG: {server_msg}")
             client_connectionSocket.close()
             p_clientSocket.close() 
             print("DEBUG: server disconnects\n")
@@ -138,6 +140,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
                     number = number.replace("\"", "")
                     available_bitrates.append(int(number))
             available_bitrates = sorted(available_bitrates)
+            availability[id_pair] = available_bitrates
             print(f"DEBUG: available bitrates is {available_bitrates}\n")
         #     if (client_addr, server_ip) in throughputs.keys():
         #         t_curr = throughputs[(client_addr[0], server_ip)]
