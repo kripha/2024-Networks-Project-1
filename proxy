@@ -65,15 +65,16 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
         print(f"DEBUG: client msg is")
         print(client_msg)
         # print(f"DEBUG: my chunk name is {chunk_name}")
-        # if "BigBuckBunny_6s_nolist.mpd" in chunk_name:
-        #     client_words[1] = "/BigBuckBunny_6s.mpd"
-        #     client_msg = " ".join(client_words)
-        #     get_mpd = True
+        get_mdp = False
+        if "BigBuckBunny_6s_nolist.mpd" in chunk_name:
+            client_words[1] = "/BigBuckBunny_6s.mpd"
+            client_msg = " ".join(client_words)
+            get_mpd = True
 
-        # else: # modify video request
-        #     get_mpd = False
+        elif "BigBuckBunny_6s" in chunk_name: # modify video request if the request is asking for a video clip
         #     t_curr = throughputs[(client_addr[0], server_ip)]
-        #     bitrate = choose_bitrate(t_curr, available_bitrates)
+            bitrate = choose_bitrate(t_curr, available_bitrates)
+            print(bitrate)
         #     bitrate = str(bitrate)
         #     # /path/to/video/bunny_<bitrate_label>bps/BigBuckBunny_6s<num>
         #     client_words[1] = f"/path/to/video/bunny_{bitrate}bps/BigBuckBunny_6s{chunk_name[-5]}" # note: there is .m4s at the end from last stage?
