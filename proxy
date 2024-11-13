@@ -57,6 +57,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
         if broken: 
             client_connectionSocket.close()
             p_clientSocket.close() 
+            print("DEBUG: client disconnects\n")
             break
 
         # proxy send message to server
@@ -103,6 +104,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
         if broken: # close connections
             client_connectionSocket.close()
             p_clientSocket.close() 
+            print("DEBUG: server disconnects\n")
             break
             
         # get content length from server headers
