@@ -62,8 +62,8 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
         # proxy send message to server
         client_words = client_msg.split(" ")
         chunk_name = client_words[1]
-        # print(f"DEBUG: client msg is")
-        # print(client_msg)
+        print(f"DEBUG: client msg is")
+        print(client_msg)
         # print(f"DEBUG: my chunk name is {chunk_name}")
         # if "BigBuckBunny_6s_nolist.mpd" in chunk_name:
         #     client_words[1] = "/BigBuckBunny_6s.mpd"
@@ -143,7 +143,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
 
         #TODO: log <time> <duration> <tput> <avg-tput> <chunk-bitrate> <server-ip> <chunkname>
         # f.write(f"{time.time()} {time.time()-download_start} {t_new/1000} {t_curr/1000} {bitrate} {server_ip} {chunk_name}\n")
-        f.write(f"{time.time()} {chunk_name}")
+        f.write(f"{time.time()} {chunk_name}\n")
         f.flush()
 
         # proxy send server_msg to client
