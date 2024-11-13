@@ -89,6 +89,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
     t_curr = 0
     id_pair = (client_addr[0], server_ip)
     # get available bitrates
+    print(mpd_request)
     p_clientSocket.send(mpd_request.encode()) # sends client msg to server
     body_msg = listen_to_server(client_connectionSocket, p_clientSocket)
     print(f"DEBUG: this is body message", body_msg)
