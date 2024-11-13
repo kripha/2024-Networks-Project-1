@@ -18,6 +18,7 @@ server_ip = "3.0.0.1" # TODO: use dns to find server ip
 server_port = 80
 
 throughputs = defaultdict(int) # holds the t_curr for each client/server pair
+availability = defaultdict(list) # hold the lists of available bitrates for each client/server pair
 
 def calc_throughput(start_time, end_time, chunk_size, t_curr, alpha):
     t_new = (chunk_size*8)/(end_time-start_time)
@@ -36,6 +37,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
     available_bitrates = []
     bitrate = 0
     t_curr = 0
+    id_pair = (client_addr[0], server_ip)
     # get available bitrates
     # p_clientSocket.send("GET BigBuckBunny_6s.mpd  HTTP/1.1".encode()) # sends client msg to server
     # print(f"DEBUG: proxy's client addr is {client_addr}")
@@ -71,12 +73,13 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
             client_words[1] = "/BigBuckBunny_6s.mpd"
             client_msg = " ".join(client_words)
             get_mpd = True
-
+        # NOTE: what if server disconnect and reconnects? there is already a list of mpd
         elif "BigBuckBunny_6s" in chunk_name: # modify video request if the request is asking for a video clip
-        #     t_curr = throughputs[(client_addr[0], server_ip)]
+            if len(available_bitrates) == 0:
+                # get the list again from dict
+                available_bitrates = availability[id_pair]
             bitrate = choose_bitrate(t_curr, available_bitrates)
-            print(bitrate)
-        #     bitrate = str(bitrate)
+            bitrate = str(bitrate)
         #     # /path/to/video/bunny_<bitrate_label>bps/BigBuckBunny_6s<num>
         #     client_words[1] = f"/path/to/video/bunny_{bitrate}bps/BigBuckBunny_6s{chunk_name[-5]}" # note: there is .m4s at the end from last stage?
         #     client_msg = " ".join(client_words)
