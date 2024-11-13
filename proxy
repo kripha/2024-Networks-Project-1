@@ -20,6 +20,53 @@ server_port = 80
 throughputs = defaultdict(int) # holds the t_curr for each client/server pair
 availability = defaultdict(list) # hold the lists of available bitrates for each client
 
+def listen_to_server(client_connectionSocket, p_clientSocket):
+    server_msg = ""
+    download_start = time.time()
+    while (True): 
+        # check if we reached the end of header
+        if len(server_msg) >= 4 and server_msg[-4:] == "\r\n\r\n":
+            break 
+        byte_msg = p_clientSocket.recv(1)
+        if not byte_msg:
+            broken = True
+            break
+        server_msg += byte_msg.decode()
+        if byte_msg.decode() == '\r' and server_msg[-2] == '\n':
+            byte_msg = p_clientSocket.recv(1) # add in last char to server msg
+            server_msg += byte_msg.decode()
+            break
+
+    if broken: # close connections
+        print(f"DEBUG: this is server msg")
+        print(server_msg)
+        client_connectionSocket.close()
+        p_clientSocket.close() 
+        print("DEBUG: server disconnects\n")
+        return -1
+        
+    # get content length from server headers
+    server_words = server_msg.replace(" ", "").split("\r\n")
+    for word in server_words:
+        if "Content-Length" in word:
+            content_len = int(word.split(":")[-1])
+
+    # get the body of http response 
+    body_msg = b""
+    while(len(body_msg) != content_len):
+        if not byte_msg:
+            broken = True
+            break
+        byte_msg = p_clientSocket.recv(2048)
+        body_msg += byte_msg 
+    end_time = time.time()
+    if broken: # close connections
+        client_connectionSocket.close()
+        p_clientSocket.close()
+        return -1
+    return body_msg
+
+
 def calc_throughput(start_time, end_time, chunk_size, t_curr, alpha):
     t_new = (chunk_size*8)/(end_time-start_time)
     t_curr = alpha*t_new + (1-alpha)*t_curr
@@ -39,7 +86,9 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
     t_curr = 0
     id_pair = (client_addr[0], server_ip)
     # get available bitrates
-    # p_clientSocket.send("GET BigBuckBunny_6s.mpd  HTTP/1.1".encode()) # sends client msg to server
+    p_clientSocket.send("GET /BigBuckBunny_6s.mpd HTTP/1.1".encode()) # sends client msg to server
+    body_msg = listen_to_server(client_connectionSocket, p_clientSocket)
+    print(f"DEBUG: this is body message", body_msg)
     # print(f"DEBUG: proxy's client addr is {client_addr}")
     while (True):
         client_msg = ""
