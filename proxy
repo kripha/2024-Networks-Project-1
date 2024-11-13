@@ -77,6 +77,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
         elif "BigBuckBunny_6s" in chunk_name: # modify video request if the request is asking for a video clip
             if len(available_bitrates) == 0:
                 # get the list again from dict
+                print("DEBUG: LIST IS EMPTY")
                 available_bitrates = availability[client_addr]
             bitrate = choose_bitrate(t_curr, available_bitrates)
             bitrate = str(bitrate)
