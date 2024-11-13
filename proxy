@@ -65,7 +65,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
         print(f"DEBUG: client msg is")
         print(client_msg)
         # print(f"DEBUG: my chunk name is {chunk_name}")
-        get_mdp = False
+        get_mpd = False
         if "BigBuckBunny_6s_nolist.mpd" in chunk_name:
             client_words[1] = "/BigBuckBunny_6s.mpd"
             client_msg = " ".join(client_words)
