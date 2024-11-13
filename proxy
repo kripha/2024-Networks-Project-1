@@ -60,6 +60,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
         # proxy send message to server
         client_words = client_msg.split(" ")
         chunk_name = client_words[1]
+        print(f"DEBUG: client is requesting for {chunk_name}")
         if "BigBuckBunny_6s_nolist.mpd" in chunk_name:
             client_words[1] = "/BigBuckBunny_6s.mpd"
             client_msg = " ".join(client_words)
