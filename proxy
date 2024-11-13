@@ -17,7 +17,7 @@ server_port = sys.argv[6]
 server_ip = "3.0.0.1" # TODO: use dns to find server ip
 server_port = 80
 
-throughputs = defaultdict(0) # holds the t_curr for each client/server pair
+throughputs = defaultdict(int) # holds the t_curr for each client/server pair
 
 def calc_throughput(start_time, end_time, chunk_size, t_curr, alpha):
     t_new = (chunk_size*8)/(end_time-start_time)
