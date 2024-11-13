@@ -129,8 +129,9 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
             # get available bitrates and initialize t_curr
             for word in body_msg.decode().split(" "):
                 if "bandwidth=" in word:
-                    word.replace("\"", "")
-                    available_bitrates.append(int(word.split("=")[-1]))
+                    number = word.split("=")[-1]
+                    number = number.replace("\"", "")
+                    available_bitrates.append(int(number))
             available_bitrates = sorted(available_bitrates)
             print(f"DEBUG: available bitrates is {available_bitrates}\n")
         #     if (client_addr, server_ip) in throughputs.keys():
