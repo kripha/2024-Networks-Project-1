@@ -68,7 +68,7 @@ def listen_to_server(client_connectionSocket, p_clientSocket):
         p_clientSocket.close()
         return -1,-1,-1
     # server_msg += body_msg.decode()
-    return server_msg, body_msg, content_len
+    return server_msg, body_msg.decode(), content_len
 
 # returns (unsmoothed) t_new, (updated) t_curr
 def calc_throughput(start_time, end_time, chunk_size, t_curr, alpha):
