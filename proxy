@@ -22,7 +22,7 @@ throughputs = defaultdict(int) # holds the t_curr for each client/server pair
 
 mpd_request = "GET /BigBuckBunny_6s.mpd HTTP/1.1\r\nHost: 3.0.0.1:8001\r\nConnection: keep-alive\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36\r\nAccept: */*\r\nReferer: http://3.0.0.1:8001/\r\nAccept-Encoding: gzip, deflate\r\nAccept-Language: en-US,en;q=0.9\r\n\r\n"
 
-# returns server_msg response (decoded) or -1 if server disconnected AND chunksize
+# returns headers, body, content-len
 def listen_to_server(client_connectionSocket, p_clientSocket):
     server_broken = False
     server_msg = ""
@@ -44,7 +44,7 @@ def listen_to_server(client_connectionSocket, p_clientSocket):
         client_connectionSocket.close()
         p_clientSocket.close() 
         print("DEBUG: server disconnects\n")
-        return -1
+        return -1, -1, -1
         
     # get content length from server headers
     server_words = server_msg.replace(" ", "").split("\r\n")
@@ -66,9 +66,9 @@ def listen_to_server(client_connectionSocket, p_clientSocket):
     if server_broken: # close connections
         client_connectionSocket.close()
         p_clientSocket.close()
-        return -1
-    server_msg += body_msg.decode()
-    return server_msg, content_len
+        return -1,-1,-1
+    # server_msg += body_msg.decode()
+    return server_msg, body_msg, content_len
 
 # returns (unsmoothed) t_new, (updated) t_curr
 def calc_throughput(start_time, end_time, chunk_size, t_curr, alpha):
@@ -92,7 +92,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
 
     # get available bitrates
     p_clientSocket.send(mpd_request.encode()) 
-    body_msg = listen_to_server(client_connectionSocket, p_clientSocket)
+    _, body_msg, _ = listen_to_server(client_connectionSocket, p_clientSocket)
     if body_msg == -1:
         return
     for word in body_msg.split(" "):
