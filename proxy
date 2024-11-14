@@ -16,7 +16,7 @@ dns_server_port = sys.argv[6]
 server_ip = sys.argv[7] #NOTE: to debug
 
 # TODO: use dns to find server ip
-# server_ip = "3.0.0.1" 
+server_ip = "3.0.0.1" 
 server_port = 8080
 
 throughputs = defaultdict(int) # holds the t_curr for each client/server pair
