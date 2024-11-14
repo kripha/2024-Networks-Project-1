@@ -150,7 +150,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
         # proxy listens to server
         # server_msg = ""
         download_start = time.time()
-        server_msg, chunk_size = listen_to_server(client_connectionSocket, p_clientSocket)
+        server_msg, body_msg, chunk_size = listen_to_server(client_connectionSocket, p_clientSocket)
         end_time = download_end = time.time()
         if body_msg == -1:
             return
@@ -160,6 +160,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
         f.write(f"{time.time()} {download_end-download_start} {t_new/1000} {t_curr/1000} {bitrate} {server_ip} {chunk_name}\n")
         f.flush()
         client_connectionSocket.send(server_msg.encode())
+        client_connectionSocket.send(body_msg)
         # while (True): 
         #     # check if we reached the end of header
         #     if len(server_msg) >= 4 and server_msg[-4:] == "\r\n\r\n":
