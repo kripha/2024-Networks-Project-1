@@ -164,7 +164,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
         t_new, updated_t_curr = calc_throughput(start_time, end_time, chunk_size, t_curr, alpha)
         throughputs[id_pair] = t_curr = updated_t_curr
         if "bps" in chunk_name:
-            f.write(f"{time.time()} {download_end-download_start} {t_new/1000} {t_curr/1000} {bitrate/1000} {server_ip} {chunk_name.encode()}\n")
+            f.write(f"{time.time()} {download_end-download_start} {t_new/1000} {t_curr/1000} {int(bitrate)/1000} {server_ip} {chunk_name.encode()}\n")
             f.flush()
         client_connectionSocket.send(server_msg.encode())
         client_connectionSocket.send(body_msg)
