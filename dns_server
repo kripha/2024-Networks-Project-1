@@ -14,19 +14,20 @@ dns_ip = ""
 with open(f"{topo_dir}/topo{topo_num}.dns", 'r') as file:
     dns_ip = file.readline()
 print(dns_ip)
-
+# dns_ip = 5.0.0.1
 # build and bind server to a port number
 serverSocket = socket(AF_INET, SOCK_DGRAM)
 serverSocket.bind((dns_ip , listen_port))
 
-#TODO: find the video server addresses.
+#TODO: find the video server addresses
 servers_ips = []
-with open(f"{topo_dir}/topo{topo_num}.dns", 'r') as file:
-    dns_ip = file.readline()
+with open(f"{topo_dir}/topo{topo_num}.servers", 'r') as file:
+    for line in file:
+        servers_ips.append(line.strip())
 
 # Recieving message from client
 clientMessage, clientAddress = serverSocket.recvfrom(2048)
-
+print(clientMessage)
 
 #TODO: log
 #TODO: find best webserver
