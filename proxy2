@@ -6,11 +6,15 @@ import threading
 
 
 # ./proxy <logfile> <listen-port> <fake-ip> <server-ip>
-logfile_name = sys.argv[1] 
-listen_port = int(sys.argv[2]) # port your proxy should listen on for accepting connections from the client.
-fake_ip = sys.argv[3] # proxy should bind to this IP address for outbound connections to the server.
-server_ip = sys.argv[4] # The IP address of the server
-server_port = 80
+#TODO: ./proxy <topo-dir> <log> <alpha> <listen-port> <fake-ip> <dns-server-port>
+topo_dir = sys.argv[1]
+logfile_name = sys.argv[2] 
+alpha = sys.argv[3] 
+listen_port = int(sys.argv[4]) # port your proxy should listen on for accepting connections from the client.
+fake_ip = sys.argv[5] # proxy should bind to this IP address for outbound connections to the server.
+dns_server_port = sys.argv[6] 
+server_ip = "3.0.0.1"
+server_port = 8000
 
 def proxy_handles_client(client_connectionSocket, p_clientSocket):
     broken = False
