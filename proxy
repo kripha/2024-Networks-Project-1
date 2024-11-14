@@ -106,7 +106,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
             number = number.replace("\"", "") # remove quotations
             available_bitrates.append(int(number))
             available_bitrates = sorted(available_bitrates)
-    
+    print("DEBUG: available bitrates is ", available_bitrates)
     # initialize t_curr (use prior knowledge or no?)
     if id_pair in throughputs.keys():
         t_curr = throughputs[id_pair]
