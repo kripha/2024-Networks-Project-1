@@ -68,7 +68,7 @@ def listen_to_server(client_connectionSocket, p_clientSocket):
         p_clientSocket.close()
         return -1,-1,-1
     # server_msg += body_msg.decode()
-    return server_msg, body_msg.decode(), content_len
+    return server_msg, body_msg, content_len
 
 # returns (unsmoothed) t_new, (updated) t_curr
 def calc_throughput(start_time, end_time, chunk_size, t_curr, alpha):
@@ -95,7 +95,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
     _, body_msg, _ = listen_to_server(client_connectionSocket, p_clientSocket)
     if body_msg == -1:
         return
-    for word in body_msg.split(" "):
+    for word in body_msg.decode().split(" "):
         if "bandwidth=" in word:
             number = word.split("=")[-1] # get the number
             number = number.replace("\"", "") # remove quotations
