@@ -5,7 +5,7 @@ import sys
 # ./dns_server <topo-dir> <log> <listen-port> <decision-method>
 topo_dir = sys.argv[1] 
 logfile_name = sys.argv[2] 
-listen_port = sys.argv[3] 
+listen_port = int(sys.argv[3])
 decision_method = sys.argv[4]
 
 #TODO: find the IP address it should listen on
