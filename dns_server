@@ -8,18 +8,21 @@ logfile_name = sys.argv[2]
 listen_port = sys.argv[3] 
 decision_method = sys.argv[4]
 
-# build and bind server to a port number
-serverSocket = socket(AF_INET, SOCK_DGRAM)
-serverSocket.bind(('' , listen_port))
-
 #TODO: find the IP address it should listen on
 topo_num = topo_dir[-1]
+dns_ip = ""
 with open(f"{topo_dir}/topo{topo_num}.dns", 'r') as file:
     dns_ip = file.readline()
 print(dns_ip)
 
-#TODO: find the video server addresses.
+# build and bind server to a port number
+serverSocket = socket(AF_INET, SOCK_DGRAM)
+serverSocket.bind((dns_ip , listen_port))
 
+#TODO: find the video server addresses.
+servers_ips = []
+with open(f"{topo_dir}/topo{topo_num}.dns", 'r') as file:
+    dns_ip = file.readline()
 
 # Recieving message from client
 clientMessage, clientAddress = serverSocket.recvfrom(2048)
