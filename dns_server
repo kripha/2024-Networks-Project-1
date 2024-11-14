@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+from socket import *
+import sys
+
+# ./dns_server <topo-dir> <log> <listen-port> <decision-method>
+topo_dir = sys.argv[1] 
+logfile_name = sys.argv[2] 
+listen_port = sys.argv[3] 
+decision_method = sys.argv[4]
+
+# build and bind server to a port number
+serverSocket = socket(AF_INET, SOCK_DGRAM)
+serverSocket.bind(('' , listen_port))
+
+#TODO: find the IP address it should listen on
+topo_num = topo_dir[-1]
+with open(f"{topo_dir}/topo{topo_num}.dns", 'r') as file:
+    dns_ip = file.readline()
+print(dns_ip)
+
+#TODO: find the video server addresses.
+
+
+# Recieving message from client
+clientMessage, clientAddress = serverSocket.recvfrom(2048)
+
+
+#TODO: log
+#TODO: find best webserver
+print("Received Message from Client: ", clientMessage.decode())
+
+# Modifying the message
+clientMessage = clientMessage.decode().upper()
+
+print("Sending Message to Client: ", clientMessage)
+
+# Sending the encoded modified message back to the client
+serverSocket.sendto(clientMessage.encode(), clientAddress)
+
+serverSocket.close()
+
