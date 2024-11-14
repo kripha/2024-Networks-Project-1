@@ -73,6 +73,9 @@ def listen_to_server(client_connectionSocket, p_clientSocket):
 # returns (unsmoothed) t_new, (updated) t_curr
 def calc_throughput(start_time, end_time, chunk_size, t_curr, alpha):
     t_new = float((chunk_size*8.0)/(end_time-start_time))
+    print(t_new)
+    print(chunk_size)
+    print(alpha)
     print(type(alpha*t_new))
     print(type((1.0-alpha)*t_curr))
     updated_t_curr = alpha*t_new + (1.0-alpha)*t_curr
