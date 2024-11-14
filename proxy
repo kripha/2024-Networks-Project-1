@@ -10,7 +10,7 @@ from socket import *
 topo_dir = sys.argv[1] 
 logfile_name = sys.argv[2] 
 alpha = float(sys.argv[3])
-listen_port = sys.argv[4]
+listen_port = int(sys.argv[4])
 fake_ip = sys.argv[5] # proxy should bind to this IP address for outbound connections to the server.
 dns_server_port = sys.argv[6]
 server_ip = sys.argv[7] #NOTE: to debug
