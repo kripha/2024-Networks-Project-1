@@ -19,15 +19,33 @@ print(dns_ip)
 serverSocket = socket(AF_INET, SOCK_DGRAM)
 serverSocket.bind((dns_ip , listen_port))
 
+RD = 0
+RA = 0
+Z = 0
+NSCOUNT = 0
+ARCOUNT = 0
+
 #TODO: find the video server addresses
 servers_ips = []
 with open(f"{topo_dir}/topo{topo_num}.servers", 'r') as file:
     for line in file:
         servers_ips.append(line.strip())
 
-# Recieving message from client
-clientMessage, clientAddress = serverSocket.recvfrom(2048)
+# Receiving message from client
+while True:
+    clientMessage = b""
+    msg, clientaddr = serverSocket.recvfrom(2048)
+    if msg.decode() == 0:
+        # we've reached the end of query
+        clientMessage += msg
+        break
+    elif not msg:
+        # client broke
+        break
+# query name is 2 bytes
+query_name = clientMessage[12:14] # starts after 12 bytes of header
 print(clientMessage)
+print(query_name.decode())
 
 #TODO: log
 #TODO: find best webserver
@@ -41,5 +59,16 @@ print("Sending Message to Client: ", clientMessage)
 # Sending the encoded modified message back to the client
 serverSocket.sendto(clientMessage.encode(), clientAddress)
 
-serverSocket.close()
+# serverSocket.close()
+# AA	Set this to 0 in requests, 1 in responses.
+# RD	Set this to 0 in all messages.
+# RA	Set this to 0 in all messages.
+# Z 	Set this to 0 in all messages.
+# NSCOUNT	Set this to 0 in all messages.
+# ARCOUNT	Set this to 0 in all messages.
+# QTYPE	Set this to 1 in all requests (asking for an A record).
+# QCLASS	Set this to 1 in all requests (asking for an IP address).
+# TYPE	Set this to 1 in all responses (returning an A record).
+# CLASS	Set this to 1 in all responses (returning an IP address).
+# TTL	Set this to 0 in all responses (no caching).
 
