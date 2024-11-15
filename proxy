@@ -13,10 +13,12 @@ alpha = float(sys.argv[3])
 listen_port = int(sys.argv[4]) # port your proxy should listen on for accepting connections from the client.
 fake_ip = sys.argv[5] # proxy should bind to this IP address for outbound connections to the server.
 server_port = sys.argv[6]
-server_ip = sys.argv[7]
+server_ip = sys.argv[7] #TODO: REMOVE
 
 # TODO: use dns to find server ip
-# server_ip = "3.0.0.1" 
+# topo_num = topo_dir[-1]
+# with open(f"{topo_dir}/topo{topo_num}.servers", 'r') as file:
+#     server_ip = file.readline()
 server_port = 8080
 
 throughputs = defaultdict(int) # holds the t_curr for each client/server pair
