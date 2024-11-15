@@ -154,6 +154,7 @@ def proxy_handles_client(client_connectionSocket, p_clientSocket, client_addr):
         download_start = time.time()
         server_msg, body_msg, chunk_size = listen_to_server(client_connectionSocket, p_clientSocket)
         end_time = download_end = time.time()
+        print(f"DEBUG: duration {download_end-download_start} for {chunk_size} so the rate would be {chunk_size/(download_end-download_start)}Bps")
         if body_msg == -1:
             return
         t_new, updated_t_curr = calc_throughput(start_time, end_time, chunk_size, t_curr, alpha)
