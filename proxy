@@ -27,6 +27,7 @@ mpd_request = "GET /BigBuckBunny_6s.mpd HTTP/1.1\r\nHost: 3.0.0.1:8001\r\nConnec
 def listen_to_server(client_connectionSocket, p_clientSocket):
     server_broken = False
     server_msg = ""
+    loop_start = time.time()
     while (True): 
         # check if we reached the end of header
         if len(server_msg) >= 4 and server_msg[-4:] == "\r\n\r\n":
@@ -40,7 +41,7 @@ def listen_to_server(client_connectionSocket, p_clientSocket):
             byte_msg = p_clientSocket.recv(1) # add in last char to server msg
             server_msg += byte_msg.decode()
             break
-
+    print(f"I listened to server for {time.time()-loop_start}\n")
     if server_broken: # close connections
         client_connectionSocket.close()
         p_clientSocket.close() 
